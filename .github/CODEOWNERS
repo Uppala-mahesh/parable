@@ -1,0 +1,34 @@
+# .github/CODEOWNERS
+
+# Global fallback
+* @parable-ai/core-team
+
+# Core causal engine — requires senior data scientist review
+/packages/core/ @parable-ai/data-science-team
+/packages/core/tests/ @parable-ai/data-science-team
+
+# API and backend services
+/apps/api/ @parable-ai/backend-team
+/packages/shared/ @parable-ai/backend-team
+
+# Frontend applications
+/apps/web/ @parable-ai/frontend-team
+/apps/mobile/ @parable-ai/frontend-team
+/packages/ui/ @parable-ai/frontend-team
+
+# Infrastructure and DevOps
+/infrastructure/ @parable-ai/devops-team
+/.github/workflows/ @parable-ai/devops-team
+
+# Documentation
+docs/ @parable-ai/core-team
+*.md @parable-ai/core-team
+
+# Security-sensitive files
+SECURITY.md @parable-ai/security-team
+.env.example @parable-ai/security-team
+infrastructure/terraform/vault/ @parable-ai/security-team
+
+# Legal
+LICENSE @parable-ai/legal
+CODE_OF_CONDUCT.md @parable-ai/legal
