@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J.A.R.V.I.S. — Personal AI Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.5/dist/purify.min.js"></script>
+</head>
+<body>
+  <!-- Animated background grid -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <!-- ══ Boot screen ══ -->
+  <div id="boot-screen">
+    <div class="boot-reactor">
+      <div class="reactor-core"></div>
+      <div class="reactor-ring r1"></div>
+      <div class="reactor-ring r2"></div>
+      <div class="reactor-ring r3"></div>
+    </div>
+    <div class="boot-text" id="boot-text">INITIALIZING J.A.R.V.I.S. ...</div>
+    <div class="boot-bar"><div class="boot-bar-fill" id="boot-bar"></div></div>
+  </div>
+
+  <!-- ══ Main app ══ -->
+  <div id="app" class="hidden">
+    <!-- Header -->
+    <header class="hud-header">
+      <div class="header-left">
+        <div class="mini-reactor">
+          <div class="mini-core"></div>
+          <div class="mini-ring"></div>
+        </div>
+        <div class="title-block">
+          <h1>J.A.R.V.I.S.</h1>
+          <span class="subtitle">Just A Rather Very Intelligent System</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="stat"><span class="stat-label">SYSTEM</span><span class="stat-value" id="stat-system">ONLINE</span></div>
+        <div class="stat"><span class="stat-label">AI CORE</span><span class="stat-value" id="stat-ai">···</span></div>
+        <div class="stat"><span class="stat-label">TIME</span><span class="stat-value" id="stat-time">--:--</span></div>
+        <button id="voice-toggle" class="hud-btn" title="Toggle voice replies">🔊 VOICE ON</button>
+      </div>
+    </header>
+
+    <!-- Chat area -->
+    <main id="chat-area">
+      <div id="messages"></div>
+    </main>
+
+    <!-- Quick commands -->
+    <div id="quick-commands">
+      <button class="qc" data-q="Good morning JARVIS, give me a briefing to start my day.">☀️ Daily Briefing</button>
+      <button class="qc" data-q="Help me plan my day. Ask me what I need to get done.">📋 Plan My Day</button>
+      <button class="qc" data-q="I need help writing some code. Ask me what I'm building.">💻 Workshop Mode</button>
+      <button class="qc" data-q="Explain a complex topic to me simply. Ask me what topic.">🧠 Research Array</button>
+      <button class="qc" data-q="Tell me something fascinating I probably don't know.">✨ Surprise Me</button>
+    </div>
+
+    <!-- Input bar -->
+    <footer id="input-bar">
+      <button id="mic-btn" class="round-btn" title="Voice input">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+      </button>
+      <div id="input-wrap">
+        <textarea id="user-input" rows="1" placeholder="At your service, Sir. How may I assist?" autocomplete="off"></textarea>
+      </div>
+      <button id="send-btn" class="round-btn send" title="Send">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
