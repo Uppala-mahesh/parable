@@ -1,180 +1,65 @@
-# Parable
+# J.A.R.V.I.S. — Your Personal AI Assistant
 
-> **The World's First Causal Intelligence Operating System**
->
-> *Not dashboards. Not predictions. Truth.*
+> *"At your service, Sir."*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Node 20+](https://img.shields.io/badge/node-20+-blue.svg)](https://nodejs.org/)
-[![Tests](https://github.com/parable-ai/parable/actions/workflows/ci.yml/badge.svg)](https://github.com/parable-ai/parable/actions)
+A website that gives you your own personal AI assistant, inspired by Tony Stark's J.A.R.V.I.S. from Iron Man — complete with an arc-reactor boot sequence, a futuristic HUD interface, streaming AI chat, and full voice interaction.
 
-## What is Parable?
+## ✨ Features
 
-Parable is a causal intelligence platform that discovers, validates, and communicates cause-and-effect relationships across any dataset.
+- 🤖 **AI Chat Core** — Real streaming AI responses (SSE) with a witty British-butler J.A.R.V.I.S. personality
+- 🎙️ **Voice Input** — Talk to JARVIS using your microphone (Web Speech API)
+- 🔊 **Voice Replies** — JARVIS speaks answers back in a British voice (toggleable)
+- ⚡ **Quick Protocols** — One-tap commands: Daily Briefing, Plan My Day, Workshop Mode, Research Array, Surprise Me
+- 🎬 **Boot Sequence** — Animated arc-reactor startup screen
+- 🖥️ **Sci-fi HUD** — Animated grid background, glowing cyan panels, live system stats and clock
+- 📱 **Responsive** — Works on desktop and mobile
+- 📝 **Markdown rendering** — Code blocks, tables, lists in responses (sanitized with DOMPurify)
 
-- **Traditional BI** tells you *what happened*
-- **AI/ML** tells you *what might happen*
-- **Parable** tells you **why it happens** — with statistical rigor, transparent confidence tiers, and zero hallucination
+## 🏗️ Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Backend | Node.js + Express (ES modules) |
+| AI | OpenAI-compatible API (`gpt-5-mini`) with SSE streaming |
+| Frontend | Vanilla HTML/CSS/JS — zero build step |
+| Voice | Web Speech API (recognition + synthesis) |
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.11+
-- Node.js 20+
-- PostgreSQL 16+
-- Redis 7+
-
-### Installation
-
 ```bash
-# Clone the repository
-git clone https://github.com/parable-ai/parable.git
-cd parable
-
-# Install Python dependencies
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pip install -e packages/core
-
-# Install Node dependencies
 npm install
-
-# Set up environment
-cp .env.example .env
-# Edit .env with your configuration
-
-# Run database migrations
-alembic upgrade head
-
-# Start development servers
-npm run dev
+# Configure AI credentials (either works):
+#   1. Env vars:  OPENAI_API_KEY, OPENAI_BASE_URL
+#   2. File:      ~/.genspark_llm.yaml
+npm start
+# → http://localhost:3000
 ```
 
-### Usage
+## 📡 API
 
-```python
-from parable.core import CausalEngine
+| Endpoint | Method | Description |
+|---|---|---|
+| `/` | GET | JARVIS web interface |
+| `/api/health` | GET | System + AI core status |
+| `/api/chat` | POST | Streaming chat — body: `{ messages: [{role, content}] }`, returns SSE |
 
-# Initialize engine
-engine = CausalEngine()
-
-# Load your data
-data = engine.load("my_data.csv")
-
-# Discover causal relationships
-graph = engine.discover(data)
-
-# Test a specific causal claim
-finding = engine.test_causal(
-    treatment="exercise",
-    outcome="mood",
-    method="backdoor"
-)
-
-print(finding.summary)
-# "We've found that exercise has a positive effect on mood 
-#  (effect size: 0.42, confidence: Established)"
-```
-
-## 🏗️ Architecture
+## 📁 Structure
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────────┐
-│   Web App   │     │  Mobile App │     │  Enterprise API │
-│  (Next.js)  │     │(React Native│     │   (REST/GraphQL)│
-└──────┬──────┘     └──────┬──────┘     └────────┬────────┘
-       │                   │                     │
-       └───────────────────┼─────────────────────┘
-                           │
-                    ┌──────┴──────┐
-                    │  API Gateway │
-                    │   (Kong)     │
-                    └──────┬──────┘
-                           │
-       ┌───────────────────┼───────────────────┐
-       │                   │                   │
-┌──────┴──────┐    ┌──────┴──────┐    ┌──────┴──────┐
-│  Ingestion   │    │   Query     │    │Communication│
-│  Service     │    │  Service    │    │  Service    │
-│  (FastAPI)   │    │ (FastAPI)   │    │ (FastAPI)   │
-└──────┬──────┘    └──────┬──────┘    └──────┬──────┘
-       │                  │                  │
-       └──────────────────┼──────────────────┘
-                          │
-              ┌───────────┴───────────┐
-              │    Causal Engine      │
-              │  (Python - Core IP)   │
-              └───────────┬───────────┘
-                          │
-       ┌──────────────────┼──────────────────┐
-       │                  │                  │
-┌──────┴──────┐    ┌──────┴──────┐    ┌──────┴──────┐
-│ PostgreSQL   │    │ TimescaleDB │    │    Redis    │
-│ (Metadata)   │    │(Time-Series)│    │   (Cache)   │
-└─────────────┘     └─────────────┘     └─────────────┘
+├── server/index.js    # Express server + streaming chat API
+├── public/
+│   ├── index.html     # HUD interface
+│   ├── style.css      # Iron-Man-style theme
+│   └── app.js         # Chat, streaming, voice logic
+└── package.json
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full architecture document.
+## 🔒 Notes
 
-## 📦 Packages
-
-| Package | Description | Language |
-|---------|-------------|----------|
-| `packages/core` | Causal inference engine | Python |
-| `packages/shared` | Shared types and utilities | TypeScript |
-| `packages/ui` | Component library | TypeScript/React |
-| `apps/web` | Web application | Next.js |
-| `apps/api` | API backend | FastAPI |
-| `apps/mobile` | Mobile application | React Native |
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-npm test
-
-# Run Python tests
-pytest packages/core/tests/
-
-# Run web tests
-npm run test:web
-
-# Run with coverage
-npm run test:coverage
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
-
-The open-source core (`packages/core`) is MIT licensed. Enterprise features and the hosted platform are proprietary.
-
-## 🌟 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=parable-ai/parable&type=Date)](https://star-history.com/#parable-ai/parable&Date)
-
-## 🔗 Links
-
-- [Documentation](https://docs.parable.ai)
-- [API Reference](https://api.parable.ai/docs)
-- [Blog](https://blog.parable.ai)
-- [Twitter/X](https://x.com/parable_ai)
-- [Discord Community](https://discord.gg/parable)
+- API key is read server-side only — never exposed to the browser.
+- Chat history is kept in the browser session (trimmed to last 20 turns for the model).
+- Voice input requires a browser supporting `SpeechRecognition` (Chrome/Edge recommended).
 
 ---
 
-<p align="center">
-  Built with ❤️ by the Parable team
-</p>
+*Built like Stark would — minimal dependencies, maximum style.*
