@@ -35,6 +35,15 @@ npm start
 # → http://localhost:3000
 ```
 
+> **Demo mode:** If no API key is set, J.A.R.V.I.S. still runs and streams a canned
+> reply — so the app is fully clickable in any deployment without a paid key.
+> Add a key to unlock real AI responses.
+
+## ☁️ Deploy (one command)
+
+**Vercel:** `vercel --prod`  •  **Render:** connect repo, set build `npm install`, start `npm start`.
+Set env `OPENAI_API_KEY` (+ optional `OPENAI_BASE_URL`) to enable the live AI core.
+
 ## 📡 API
 
 | Endpoint | Method | Description |
