@@ -70,7 +70,24 @@ app.post('/api/chat', async (req, res) => {
     return res.status(400).json({ error: 'messages array required' });
   }
   if (!client) {
-    return res.status(503).json({ error: 'AI core offline: no API key configured. Set OPENAI_API_KEY.' });
+    // DEMO MODE — no API key configured. Stream a canned J.A.R.V.I.S. reply so the
+    // deployed app is fully clickable for recruiters/demo without a paid key.
+    const demo =
+      "Good evening, Sir. This is J.A.R.V.I.S. operating in *demo mode* — the AI core is " +
+      "not connected to a key in this deployment. Once configured with an OpenAI-compatible " +
+      "API key, I respond in real time with streaming, voice, and all protocols online. " +
+      "For now, allow me to demonstrate the interface is fully functional. Shall I compile " +
+      "your daily briefing?";
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+    for (const tok of demo.split(/(\s+)/)) {
+      res.write(`data: ${JSON.stringify({ delta: tok })}\n\n`);
+      await new Promise((r) => setTimeout(r, 22));
+    }
+    res.write('data: [DONE]\n\n');
+    return res.end();
   }
 
   res.setHeader('Content-Type', 'text/event-stream');
