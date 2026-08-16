@@ -11,9 +11,10 @@
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.5/dist/purify.min.js"></script>
 </head>
 <body>
-  <!-- Animated background grid -->
+  <!-- Animated background -->
   <div class="bg-grid"></div>
   <div class="bg-glow"></div>
+  <canvas id="bg-particles"></canvas>
 
   <!-- ══ Boot screen ══ -->
   <div id="boot-screen">
@@ -32,7 +33,7 @@
     <!-- Header -->
     <header class="hud-header">
       <div class="header-left">
-        <div class="mini-reactor">
+        <div class="mini-reactor" id="reactor-btn" title="J.A.R.V.I.S.">
           <div class="mini-core"></div>
           <div class="mini-ring"></div>
         </div>
@@ -42,41 +43,109 @@
         </div>
       </div>
       <div class="header-right">
-        <div class="stat"><span class="stat-label">SYSTEM</span><span class="stat-value" id="stat-system">ONLINE</span></div>
         <div class="stat"><span class="stat-label">AI CORE</span><span class="stat-value" id="stat-ai">···</span></div>
         <div class="stat"><span class="stat-label">TIME</span><span class="stat-value" id="stat-time">--:--</span></div>
-        <button id="voice-toggle" class="hud-btn" title="Toggle voice replies">🔊 VOICE ON</button>
+        <button id="wake-toggle" class="hud-btn" title='Wake word: say "Jarvis" to activate mic'>👂 WAKE</button>
+        <button id="voice-toggle" class="hud-btn" title="Toggle voice replies">🔊 VOICE</button>
+        <button id="panel-toggle" class="hud-btn" title="Toggle HUD panels">📡 HUD</button>
+        <button id="settings-btn" class="hud-btn" title="Settings">⚙</button>
       </div>
     </header>
 
-    <!-- Chat area -->
-    <main id="chat-area">
-      <div id="messages"></div>
-    </main>
+    <div id="layout">
+      <!-- ══ Chat column ══ -->
+      <div id="chat-col">
+        <main id="chat-area">
+          <div id="messages"></div>
+        </main>
 
-    <!-- Quick commands -->
-    <div id="quick-commands">
-      <button class="qc" data-q="Good morning JARVIS, give me a briefing to start my day.">☀️ Daily Briefing</button>
-      <button class="qc" data-q="Help me plan my day. Ask me what I need to get done.">📋 Plan My Day</button>
-      <button class="qc" data-q="I need help writing some code. Ask me what I'm building.">💻 Workshop Mode</button>
-      <button class="qc" data-q="Explain a complex topic to me simply. Ask me what topic.">🧠 Research Array</button>
-      <button class="qc" data-q="Tell me something fascinating I probably don't know.">✨ Surprise Me</button>
-    </div>
+        <!-- Active timers strip -->
+        <div id="timer-strip"></div>
 
-    <!-- Input bar -->
-    <footer id="input-bar">
-      <button id="mic-btn" class="round-btn" title="Voice input">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
-      </button>
-      <div id="input-wrap">
-        <textarea id="user-input" rows="1" placeholder="At your service, Sir. How may I assist?" autocomplete="off"></textarea>
+        <!-- Quick commands -->
+        <div id="quick-commands">
+          <button class="qc" data-q="Good morning JARVIS — full daily briefing: weather, top news, my open tasks.">☀️ Daily Briefing</button>
+          <button class="qc" data-q="What's the weather looking like today and the next few days?">🌦 Weather</button>
+          <button class="qc" data-q="Give me the top news headlines right now.">📰 News</button>
+          <button class="qc" data-q="Show my task list and help me prioritize it.">📋 My Tasks</button>
+          <button class="qc" data-q="What are the top tech stories on Hacker News right now?">🖥 Tech Feed</button>
+          <button class="qc" data-q="Current crypto prices — bitcoin, ethereum, solana.">📈 Markets</button>
+          <button class="qc" data-q="Tell me a good joke, JARVIS.">😄 Humor Protocol</button>
+        </div>
+
+        <!-- Input bar -->
+        <footer id="input-bar">
+          <button id="mic-btn" class="round-btn" title="Voice input">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+          </button>
+          <div id="input-wrap">
+            <textarea id="user-input" rows="1" placeholder='At your service. Type, speak, or try "/help" ...' autocomplete="off"></textarea>
+          </div>
+          <button id="send-btn" class="round-btn send" title="Send">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+          </button>
+        </footer>
       </div>
-      <button id="send-btn" class="round-btn send" title="Send">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-      </button>
-    </footer>
+
+      <!-- ══ HUD side panels ══ -->
+      <aside id="hud-panels">
+        <section class="panel" id="panel-weather">
+          <div class="panel-head"><span>◈ ATMOSPHERICS</span><button class="panel-refresh" data-panel="weather">⟳</button></div>
+          <div class="panel-body" id="weather-body"><div class="panel-loading">SCANNING ...</div></div>
+        </section>
+
+        <section class="panel" id="panel-tasks">
+          <div class="panel-head"><span>◈ MISSION OBJECTIVES</span><button class="panel-refresh" data-panel="tasks">⟳</button></div>
+          <div class="panel-body" id="tasks-body"><div class="panel-loading">LOADING ...</div></div>
+          <form id="task-form">
+            <input id="task-input" type="text" placeholder="+ new objective" maxlength="200" />
+          </form>
+        </section>
+
+        <section class="panel" id="panel-news">
+          <div class="panel-head"><span>◈ GLOBAL FEED</span><button class="panel-refresh" data-panel="news">⟳</button></div>
+          <div class="panel-body" id="news-body"><div class="panel-loading">RECEIVING ...</div></div>
+        </section>
+
+        <section class="panel" id="panel-memory">
+          <div class="panel-head"><span>◈ MEMORY BANKS</span><button class="panel-refresh" data-panel="memory">⟳</button></div>
+          <div class="panel-body" id="memory-body"><div class="panel-loading">ACCESSING ...</div></div>
+        </section>
+
+        <section class="panel" id="panel-diag">
+          <div class="panel-head"><span>◈ DIAGNOSTICS</span></div>
+          <div class="panel-body" id="diag-body">
+            <div class="diag-row"><span>AI CORE</span><span id="diag-ai">—</span></div>
+            <div class="diag-row"><span>MODEL</span><span id="diag-model">—</span></div>
+            <div class="diag-row"><span>UPTIME</span><span id="diag-uptime">—</span></div>
+            <div class="diag-row"><span>SESSION MSGS</span><span id="diag-msgs">0</span></div>
+            <div class="diag-row"><span>VOICE</span><span id="diag-voice">ON</span></div>
+            <div class="diag-row"><span>WAKE WORD</span><span id="diag-wake">OFF</span></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ══ Settings modal ══ -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-card">
+      <h2>⚙ SYSTEM CONFIGURATION</h2>
+      <label>How should JARVIS address you?
+        <input id="set-name" type="text" placeholder="Sir" maxlength="40" />
+      </label>
+      <label>Home city (weather &amp; briefings)
+        <input id="set-city" type="text" placeholder="New York" maxlength="60" />
+      </label>
+      <label class="row-label"><input id="set-sound" type="checkbox" checked /> Interface sound effects</label>
+      <div class="modal-actions">
+        <button id="settings-cancel" class="hud-btn">CANCEL</button>
+        <button id="settings-save" class="hud-btn primary">SAVE</button>
+      </div>
+    </div>
   </div>
 
   <script src="/app.js"></script>
+  <script src="/voice.js"></script>
 </body>
 </html>
